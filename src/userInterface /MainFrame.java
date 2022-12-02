@@ -177,12 +177,159 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void custbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_custbtnActionPerformed
+        // TODO add your handl
+        CardLayout layout=(CardLayout)container.getLayout();
+        container.add("workArea", new WorkAreaClientPanel(container, null, system, null));
+        layout.next(container);
+        logoutbutton.setEnabled(true);
+        custbtn.setEnabled(false);
+        usernametxtfield.setEditable(false);
+        passtxtfield.setEditable(false);
+    }//GEN-LAST:event_custbtnActionPerformed
+
+    private void adminbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminbtnActionPerformed
+        // TODO add your handling code here:
+         usernametxtfield.setEditable(true);
+         passtxtfield.setEditable(true);
+    }//GEN-LAST:event_adminbtnActionPerformed
+
+    private void logoutbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutbuttonActionPerformed
+        
+        logoutbutton.setEnabled(false);
+        usernametxtfield.setEnabled(true);
+        passtxtfield.setEnabled(true);
+        custbtn.setEnabled(true);
+        usernametxtfield.setEditable(true);
+         passtxtfield.setEditable(true);
+
+        usernametxtfield.setText("");
+         passtxtfield.setText("");
+
+        container.removeAll();
+        JPanel blankJP = new JPanel();
+        container.add("blank", blankJP);
+        CardLayout crdLyt = (CardLayout) container.getLayout();
+        crdLyt.next(container);
+        dB4OUtil.storeSystem(system);
+    }//GEN-LAST:event_logoutbuttonActionPerformed
+
+    private void passtxtfieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passtxtfieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_passtxtfieldActionPerformed
+
+    private void loginbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginbuttonActionPerformed
+        // TODO add your handling code here:
+        String userName = usernametxtfield.getText();
+        // Get Password
+        char[] passwordCharArray = passtxtfield.getPassword();
+        String password = String.valueOf(passwordCharArray);
+
+        //Step1: Check in the system admin user account directory if you have the user
+        UserAcc userAcc=system.getUserAccDirectory().authenticateUser(userName, password);
+
+        Network inNetwork=null;
+        Enterprise inEnterprise=null;
+        Organization inOrganization=null;
+
+        if(userAcc==null){
+            //Step 2: Go inside each network and check each enterprise
+            for(Network network:system.getNetworkList()){
+                //Step 2.a: check against each enterprise
+                for(Enterprise enterprise:network.getEnterpriseDirectory().getEnterpriseList()){
+                    userAcc=enterprise.getUserAccDirectory().authenticateUser(userName, password);
+                    if(userAcc==null){
+                        //Step 3:check against each organization for each enterprise
+                        for(Organization organization:enterprise.getOrganizationDirectory().getOrganizationList()){
+                            userAcc=organization.getUserAccDirectory().authenticateUser(userName, password);
+                            if(userAcc!=null){
+                                inNetwork=network;
+                                inEnterprise=enterprise;
+                                inOrganization=organization;
+                                break;
+                            }
+                        }
+
+                    }
+                    else{
+                        inEnterprise=enterprise;
+                        break;
+                    }
+                    if(inOrganization!=null){
+                        break;
+                    }
+                }
+                if(inEnterprise!=null){
+                    break;
+                }
+            }
+        }
+
+        if(userAcc==null){
+            JOptionPane.showMessageDialog(null, "Invalid credentials");
+            return;
+        }
+        else{
+            CardLayout layout=(CardLayout)container.getLayout();
+            container.add("workArea",userAcc.getRole().createWorkArea(container, userAcc, inOrganization, inEnterprise, system, inNetwork));
+            layout.next(container);
+        }
+
+        custbtn.setEnabled(false);
+        logoutbutton.setEnabled(true);
+        usernametxtfield.setEnabled(false);
+        passtxtfield.setEnabled(false);
+    }//GEN-LAST:event_loginbuttonActionPerformed
+ /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new MainFrame().setVisible(true);
+            }
+        });
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton adminbtn;
     private javax.swing.JPanel container;
-    
+    private javax.swing.JButton custbtn;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JButton loginbutton;
+    private javax.swing.JButton logoutbutton;
+    private javax.swing.JPasswordField passtxtfield;
+    private javax.swing.JTextField usernametxtfield;
     // End of variables declaration//GEN-END:variables
 }
   
