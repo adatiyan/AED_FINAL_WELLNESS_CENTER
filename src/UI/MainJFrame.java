@@ -307,6 +307,8 @@ public class MainJFrame extends javax.swing.JFrame {
         });
     }
 
+    
+    //code added above to check merge and create branch
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel container;
     private javax.swing.JButton customerBtn;
