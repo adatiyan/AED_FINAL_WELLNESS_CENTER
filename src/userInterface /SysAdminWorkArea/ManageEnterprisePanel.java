@@ -197,6 +197,8 @@ public class ManageEnterprisePanel extends javax.swing.JPanel {
         }
 
         Nametxt.setText("");
+       //Nametxt.setText("");
+        
     }//GEN-LAST:event_SubmitbtnActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
