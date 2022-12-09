@@ -18,9 +18,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ManageNetworkPanel extends javax.swing.JPanel {
 
-    /**
-     * Creates new form ManageNetworkPanel
-     */
     
     private JPanel userProcessContainer;
     private EcoSystem system; 
